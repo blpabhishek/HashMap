@@ -31,8 +31,8 @@ public class Hash <K,V>{
     @Override
     public String toString() {
         String string = new String("");
-        for (Object o : table) {
-            if (o instanceof Integer)
+        for (V o : (V[])table) {
+            if(o !=null)
                 string += o.toString()+",";
         }
         return "{"+string.substring(0,string.length()-1)+"}";
