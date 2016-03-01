@@ -8,18 +8,17 @@ public class HashTest {
     Hash<String, Integer> hash;
     @Before
     public void setUp() throws Exception {
-        hash = new Hash<>(10);
+        hash = new Hash<>(10,2);
     }
 
-    @Test
-    public void testPut() throws Exception {
-        assertTrue(hash.put("Key",32));
-    }
 
     @Test
     public void testGet() throws Exception {
-        boolean key = hash.put("Hello", 32);
+        hash.put("Hello", 32);
+        hash.put("Something",23);
         assertEquals(new Integer(32), hash.get("Hello"));
+        Integer value = hash.get("Something");
+        assertEquals(new Integer(23),value);
     }
 
     @Test
@@ -30,22 +29,33 @@ public class HashTest {
     }
 
     @Test
-    public void testIfCollision() throws Exception{
-        hash.put("Something",32);
-        hash.put("SomeOtherThing",45);
-        hash.put("Some",32);
-        hash.put("OtherThing",45);
-        hash.put("thing",32);
-        hash.put("Thing",45);
-        hash.put("SomeThing",45);
-        System.out.println("hash = " + hash);
-        System.out.println("hash.size() = " + hash.size());
-    }
-
-    @Test
     public void testSize() throws Exception {
         hash.put("Something",32);
         hash.put("SomeOtherThing",45);
         assertEquals(2,hash.size());
+    }
+
+    @Test
+    public void testItCanOverrideLastValueAndSizeShouldRemainSame() throws Exception{
+        hash.put("1",32);
+        hash.put("2",45);
+        hash.put("3",32);
+        hash.put("3",67);
+        hash.put("4",45);
+        hash.put("5",32);
+        hash.put("6",45);
+        hash.put("7",45);
+        assertEquals(7,hash.size());
+    }
+
+    @Test
+    public void testDealingWithCollision() throws Exception{
+        hash.put("1",32);
+        hash.put("2",45);
+        hash.put("7",45);
+        hash.put("11",32);
+        hash.put("b",32);
+        System.out.println("hash = " + hash);
+        assertEquals(5,hash.size());
     }
 }
