@@ -3,16 +3,18 @@ import java.util.Objects;
 public class Hash<K, V> {
     private int capacity;
     private int size = 0;
-    private static final int DEFAULT_SIZE = 64;
-    private final Pair<?, ?>[] EMPTY_TABLE = new Pair[0];
+    private static final int DEFAULT_SIZE = 32;
+    private final Pair<K,V>[] EMPTY_TABLE = new Pair[0];
     private Pair[] table = (Pair<K, V>[]) EMPTY_TABLE;
     private int load;
 
     public Hash() {
-        this(DEFAULT_SIZE, 32);
+        this(DEFAULT_SIZE, 8);
     }
 
     public Hash(int capacity, int load) {
+        if(capacity<0||load<0)
+            throw new IllegalArgumentException("Can not initalize the Hash with "+capacity+" and "+load);
         this.capacity = capacity;
         this.load = load;
     }
@@ -23,7 +25,7 @@ public class Hash<K, V> {
         int hash = hashFunction(key);
         int index = getIndex(hash);
         Pair<K, V> pair = table[index];
-        if (pair != null && pair.hash == hash && pair.key == key) {
+        if (pair != null && (pair.hash == hash && pair.key == key|| pair.key.equals(key))) {
             V oldValue = pair.value;
             pair.value = value;
             return oldValue;
@@ -34,14 +36,22 @@ public class Hash<K, V> {
 
     public V get(K key) {
         Pair<K, V> pair = getPair(key);
-        return pair.value;
+        if(pair!=null)
+            return pair.value;
+        return null;
     }
 
     public int size() {
         return size;
     }
 
+    public void clear(){
+       table = EMPTY_TABLE;
+    }
+
     private int hashFunction(Object key) {
+        if(key == null)
+            return 0;
         String str = key.toString();
         int summation = 0;
         for (int i = 0; i < str.length(); i++)
@@ -95,11 +105,14 @@ public class Hash<K, V> {
         }
     }
 
-
     private Pair<K, V> getPair(Object key) {
         int hash = hashFunction(key);
-        int index = getIndex(hash);
-        return table[index];
+        for (int index = getIndex(hash);index < capacity; index++) {
+            Pair<K,V> pair= table[index];
+            if(pair!=null && (pair.key == key || pair.key.equals(key)))
+                return pair;
+        }
+        return  null;
     }
 
     @Override

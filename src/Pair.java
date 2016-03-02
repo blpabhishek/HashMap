@@ -1,5 +1,3 @@
-import java.util.Objects;
-
 class Pair<K,V>{
     final K key;
     V value;

@@ -8,7 +8,7 @@ public class HashTest {
     Hash<String, Integer> hash;
     @Before
     public void setUp() throws Exception {
-        hash = new Hash<>(10,2);
+        hash = new Hash<>();
     }
 
 
@@ -55,7 +55,27 @@ public class HashTest {
         hash.put("7",45);
         hash.put("11",32);
         hash.put("b",32);
-        System.out.println("hash = " + hash);
         assertEquals(5,hash.size());
+    }
+
+    @Test
+    public void testInCaseOfCollisionHashMapShouldGiveBackTheValue() throws Exception{
+        hash.put("11",38);
+        hash.put("b",32);
+        assertEquals(new Integer(32),hash.get("b"));
+    }
+
+    @Test
+    public void testHashMapShouldGiveNULLWhenKeyIsNotThere() throws Exception{
+        hash.put("11",38);
+        hash.put("b",32);
+        assertEquals(null,hash.get("m"));
+    }
+
+    @Test
+    public void testShouldAllowMeToInsertNullValue() throws Exception{
+        hash.put(null,38);
+        hash.put(null,39);
+        assertEquals(new Integer(39),hash.get(null));
     }
 }
