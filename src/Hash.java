@@ -2,12 +2,12 @@ public class Hash<K, V> {
     private int capacity;
     private int size = 0;
     private static final int DEFAULT_SIZE = 32;
-    private final Pair<K, V>[] EMPTY_TABLE = new Pair[0];
-    private Pair[] table = (Pair<K, V>[]) EMPTY_TABLE;
+    private static final int DEFAULT_LOAD = 8;
+    private Pair[] table = (Pair<K, V>[]) new Pair[0];
     private int load;
 
     public Hash() {
-        this(DEFAULT_SIZE, 8);
+        this(DEFAULT_SIZE, DEFAULT_LOAD);
     }
 
     public Hash(int capacity, int load) {
@@ -43,7 +43,7 @@ public class Hash<K, V> {
     }
 
     public void clear() {
-        table = EMPTY_TABLE;
+        table = new Pair[capacity];
         size = 0;
     }
 

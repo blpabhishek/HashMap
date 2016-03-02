@@ -70,12 +70,9 @@ public class HashTest {
 
     @Test
     public void testDealingWithCollision() throws Exception{
-        hash.put("1",32);
-        hash.put("2",45);
-        hash.put("7",45);
         hash.put("11",32);
         hash.put("b",32);
-        assertEquals(5,hash.size());
+        assertEquals(2,hash.size());
     }
 
     @Test
