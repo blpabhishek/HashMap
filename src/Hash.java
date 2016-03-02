@@ -1,7 +1,3 @@
-import org.omg.CosNaming.NamingContextPackage.NotFound;
-
-import java.util.Objects;
-
 public class Hash<K, V> {
     private int capacity;
     private int size = 0;
@@ -19,15 +15,14 @@ public class Hash<K, V> {
             throw new IllegalArgumentException("Can not initalize the Hash with " + capacity + " and " + load);
         this.capacity = capacity;
         this.load = load;
+        table = new Pair[capacity];
     }
 
     public V put(K key, V value) {
-        if (table == EMPTY_TABLE)
-            initializeTable(capacity);
         int hash = hashFunction(key);
         int index = getIndex(hash);
         Pair<K, V> pair = table[index];
-        if (pair != null && (pair.hash == hash && pair.key == key || pair.key.equals(key))) {
+        if (pair != null && (pair.key == key || pair.key.equals(key))) {
             V oldValue = pair.value;
             pair.value = value;
             return oldValue;
@@ -82,9 +77,7 @@ public class Hash<K, V> {
         return hash % capacity;
     }
 
-    private void initializeTable(int value) {
-        table = new Pair[value];
-    }
+
 
     private void setPair(int hash, K key, V value, int index) {
         Pair<K, V> e = table[index];
@@ -98,7 +91,7 @@ public class Hash<K, V> {
             }
             e = table[index];
         }
-        table[index] = new Pair<>(hash, key, value);
+        table[index] = new Pair<>(key, value);
         size++;
     }
 
@@ -118,7 +111,7 @@ public class Hash<K, V> {
             if (e != null) {
                 int hash = hashFunction(e.key);
                 int index = getIndex(hash);
-                newTable[index] = new Pair<>(hash, e.key, e.value);
+                newTable[index] = new Pair<>(e.key, e.value);
                 size++;
             }
         }

@@ -1,13 +1,11 @@
 class Pair<K,V>{
     final K key;
     V value;
-    int hash;
-    Pair(int h, K k, V v) {
+    Pair(K k, V v) {
         value = v;
         key = k;
-        hash = h;
-    }
 
+    }
     public final K getKey() {
         return key;
     }

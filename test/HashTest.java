@@ -15,6 +15,16 @@ public class HashTest {
         hash = new Hash<>();
     }
 
+    @Test
+    public void testPut() throws Exception {
+        assertEquals(new Integer(32),hash.put("Hello", 32));
+    }
+
+    @Test
+    public void testPutIfKeyAlreadyExist() throws Exception {
+        hash.put("Hello", 32);
+        assertEquals(new Integer(32),hash.put("Hello", 322));
+    }
 
     @Test
     public void testGet() throws Exception {
@@ -23,6 +33,12 @@ public class HashTest {
         assertEquals(new Integer(32), hash.get("Hello"));
         Integer value = hash.get("Something");
         assertEquals(new Integer(23),value);
+    }
+
+    @Test
+    public void testGetIfKeyDoesNotExist() throws Exception {
+        thrown.expect(ValueNotFoundException.class);
+        hash.get("UnknownKey");
     }
 
     @Test
@@ -80,12 +96,18 @@ public class HashTest {
     @Test
     public void testShouldAllowMeToInsertNullValue() throws Exception{
         hash.put(null,38);
-        hash.put(null,39);
-        assertEquals(new Integer(39),hash.get(null));
+        hash.put(null,null);
+        assertEquals(null,hash.get(null));
     }
 
     @Test
-    public void testShouldRemoveTheSpecifiedKey() throws Exception{
+    public void testRemoveKeyShouldRemoveTheSpecifiedKeyAndReturnBackTheValue() throws Exception{
+        hash.put("Number", 38);
+        Integer num = hash.remove("Number");
+        assertEquals(new Integer(38),num);
+    }
+    @Test
+    public void testRemoveKeyShouldThrowErrorIfTheSpecifiedKeyIsNotFound() throws Exception{
         hash.put("Key",398);
         hash.put("Name",38);
         hash.remove("Name");
