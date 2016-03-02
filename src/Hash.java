@@ -1,10 +1,12 @@
+import org.omg.CosNaming.NamingContextPackage.NotFound;
+
 import java.util.Objects;
 
 public class Hash<K, V> {
     private int capacity;
     private int size = 0;
     private static final int DEFAULT_SIZE = 32;
-    private final Pair<K,V>[] EMPTY_TABLE = new Pair[0];
+    private final Pair<K, V>[] EMPTY_TABLE = new Pair[0];
     private Pair[] table = (Pair<K, V>[]) EMPTY_TABLE;
     private int load;
 
@@ -13,8 +15,8 @@ public class Hash<K, V> {
     }
 
     public Hash(int capacity, int load) {
-        if(capacity<0||load<0)
-            throw new IllegalArgumentException("Can not initalize the Hash with "+capacity+" and "+load);
+        if (capacity < 0 || load < 0)
+            throw new IllegalArgumentException("Can not initalize the Hash with " + capacity + " and " + load);
         this.capacity = capacity;
         this.load = load;
     }
@@ -25,7 +27,7 @@ public class Hash<K, V> {
         int hash = hashFunction(key);
         int index = getIndex(hash);
         Pair<K, V> pair = table[index];
-        if (pair != null && (pair.hash == hash && pair.key == key|| pair.key.equals(key))) {
+        if (pair != null && (pair.hash == hash && pair.key == key || pair.key.equals(key))) {
             V oldValue = pair.value;
             pair.value = value;
             return oldValue;
@@ -36,21 +38,38 @@ public class Hash<K, V> {
 
     public V get(K key) {
         Pair<K, V> pair = getPair(key);
-        if(pair!=null)
-            return pair.value;
-        return null;
+        if (pair == null)
+            throw new ValueNotFoundException();
+        return pair.value;
     }
 
     public int size() {
         return size;
     }
 
-    public void clear(){
-       table = EMPTY_TABLE;
+    public void clear() {
+        table = EMPTY_TABLE;
+        size = 0;
+    }
+
+    public V remove(Object key){
+        int hash = hashFunction(key);
+        int index = getIndex(hash);
+        Pair<K, V> pair = null;
+        for (; index < capacity; index++) {
+            pair = table[index];
+            if (pair != null && (pair.key == key || pair.key.equals(key)))
+                break;
+        }
+        if (pair == null)
+            throw new ValueNotFoundException();
+        table[index] = null;
+        size--;
+        return  pair.value;
     }
 
     private int hashFunction(Object key) {
-        if(key == null)
+        if (key == null)
             return 0;
         String str = key.toString();
         int summation = 0;
@@ -74,7 +93,7 @@ public class Hash<K, V> {
             if (index >= capacity) {
                 resizeTable();
                 System.out.println("Be careful it is going recursive");
-                put(key,value);
+                put(key, value);
                 return;
             }
             e = table[index];
@@ -90,12 +109,12 @@ public class Hash<K, V> {
         Pair[] newTable = new Pair[newCapacity];
         size = 0;
         capacity = newCapacity;
-        transfer(oldTable,newTable);
+        transfer(oldTable, newTable);
         table = newTable;
     }
 
     private void transfer(Pair[] oldTable, Pair[] newTable) {
-        for (Pair<K,V> e : oldTable) {
+        for (Pair<K, V> e : oldTable) {
             if (e != null) {
                 int hash = hashFunction(e.key);
                 int index = getIndex(hash);
@@ -107,19 +126,19 @@ public class Hash<K, V> {
 
     private Pair<K, V> getPair(Object key) {
         int hash = hashFunction(key);
-        for (int index = getIndex(hash);index < capacity; index++) {
-            Pair<K,V> pair= table[index];
-            if(pair!=null && (pair.key == key || pair.key.equals(key)))
+        for (int index = getIndex(hash); index < capacity; index++) {
+            Pair<K, V> pair = table[index];
+            if (pair != null && (pair.key == key || pair.key.equals(key)))
                 return pair;
         }
-        return  null;
+        return null;
     }
 
     @Override
     public String toString() {
         String string = new String("");
-        if(size == 0)
-            return "{"+string+"}";
+        if (size == 0)
+            return "{" + string + "}";
         for (Pair o : (Pair[]) table) {
             if (o != null) {
                 string += o.toString() + ",";

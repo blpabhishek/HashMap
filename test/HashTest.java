@@ -1,11 +1,15 @@
-import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class HashTest {
     Hash<String, Integer> hash;
+
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
     @Before
     public void setUp() throws Exception {
         hash = new Hash<>();
@@ -66,10 +70,11 @@ public class HashTest {
     }
 
     @Test
-    public void testHashMapShouldGiveNULLWhenKeyIsNotThere() throws Exception{
+    public void testHashMapShouldThrowErrorWhenKeyIsNotThere() throws Exception{
         hash.put("11",38);
         hash.put("b",32);
-        assertEquals(null,hash.get("m"));
+        thrown.expect(ValueNotFoundException.class);
+        hash.get("PrankKey");
     }
 
     @Test
@@ -77,5 +82,15 @@ public class HashTest {
         hash.put(null,38);
         hash.put(null,39);
         assertEquals(new Integer(39),hash.get(null));
+    }
+
+    @Test
+    public void testShouldRemoveTheSpecifiedKey() throws Exception{
+        hash.put("Key",398);
+        hash.put("Name",38);
+        hash.remove("Name");
+        assertEquals(1,hash.size());
+        thrown.expect(ValueNotFoundException.class);
+        hash.get("Name");
     }
 }
