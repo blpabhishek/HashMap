@@ -1,3 +1,5 @@
+import java.util.Objects;
+
 public class Hash<K, V> {
     private int capacity;
     private int size = 0;
@@ -11,8 +13,6 @@ public class Hash<K, V> {
     }
 
     public Hash(int capacity, int load) {
-        if (capacity < 0 || load < 0)
-            throw new IllegalArgumentException("Can not initalize the Hash with " + capacity + " and " + load);
         this.capacity = capacity;
         this.load = load;
         table = new Pair[capacity];
@@ -22,7 +22,7 @@ public class Hash<K, V> {
         int hash = hashFunction(key);
         int index = getIndex(hash);
         Pair<K, V> pair = table[index];
-        if (pair != null && (pair.key == key || pair.key.equals(key))) {
+        if (pair != null && (pair.key == key ||  pair.key.equals(key))) {
             V oldValue = pair.value;
             pair.value = value;
             return oldValue;
@@ -77,16 +77,13 @@ public class Hash<K, V> {
         return hash % capacity;
     }
 
-
-
     private void setPair(int hash, K key, V value, int index) {
         Pair<K, V> e = table[index];
         while (e != null) {
             index++;
             if (index >= capacity) {
                 resizeTable();
-                System.out.println("Be careful it is going recursive");
-                put(key, value);
+                put(key,value);
                 return;
             }
             e = table[index];
@@ -95,6 +92,7 @@ public class Hash<K, V> {
         size++;
     }
 
+
     private void resizeTable() {
         Pair[] oldTable = table;
         int oldCapacity = oldTable.length;
@@ -102,19 +100,30 @@ public class Hash<K, V> {
         Pair[] newTable = new Pair[newCapacity];
         size = 0;
         capacity = newCapacity;
-        transfer(oldTable, newTable);
-        table = newTable;
+         if(transfer(oldTable, newTable)) {
+             table = newTable;
+         }
+        else{
+             load *=2;
+            resizeTable();
+         }
     }
 
-    private void transfer(Pair[] oldTable, Pair[] newTable) {
+    private boolean transfer(Pair[] oldTable, Pair[] newTable) {
         for (Pair<K, V> e : oldTable) {
             if (e != null) {
                 int hash = hashFunction(e.key);
                 int index = getIndex(hash);
+                while(newTable[index]!=null) {
+                    if(index >= newTable.length-1)
+                       return false;
+                    index++;
+                }
                 newTable[index] = new Pair<>(e.key, e.value);
                 size++;
             }
         }
+        return true;
     }
 
     private Pair<K, V> getPair(Object key) {
