@@ -1,5 +1,8 @@
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 
 public class PerformanceTest {
@@ -14,7 +17,6 @@ public class PerformanceTest {
         int value = 500;
         for (int i = 0; i < value; i++)
             hash.put(i+"", i);
-        System.out.println("hash = " + hash);
-        System.out.println("size = " + hash.size());
+        assertEquals(hash.size(),500);
     }
 }
